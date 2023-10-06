@@ -10,7 +10,7 @@ HAVE_SSE4=y
 HAVE_GF2X=n
 
 ###### Nothing user-configurable below here ########
-.PHONY: all clean paper src-pdf figures notes
+.PHONY: all clean src-pdf figures
 all: extractor
 BITEXTS = 1bitext_xor.o 1bitext_expander.o 1bitext_rsh.o
 WDS = weakdes_gf2x.o weakdes_gfp.o weakdes_aot.o weakdes_block.o
@@ -26,9 +26,8 @@ all.objects = $(objects) $(objects.ext) $(objects.r)
 headers = 1bitext.h debug.h timing.h weakdes_gf2x.h weakdes_gfp.h weakdes_block.h \
 	  utils.hpp weakdes.h bitfield.hpp
 platform=$(shell uname)
-INCDIRS=-I/opt/local/include
-INCDIRS+=-I/Users/wolfgang/src/openssl-1.0.1c/include
-LIBDIRS=-L/opt/local/lib
+#INCDIRS=-I/opt/local/include
+#LIBDIRS=-L/opt/local/lib
 CXXFLAGS=$(OPTIMISE) $(OPENMP) $(DEBUG) $(VARIANTS) $(INCDIRS)
 ifeq ($(HAVE_SSE4),y)
 CXXFLAGS+=-msse4.2 -DHAVE_SSE4
@@ -89,12 +88,6 @@ extractor: $(all.objects) extractor.cc $(headers) .rldflags .rcxxflags
 	$(CXX) $(CXXFLAGS) $(shell cat .rcxxflags) extractor.cc $(all.objects) -o extractor \
 	$(LIBDIRS) $(LIBS) $(shell cat .rldflags)
 
-# NOTE: This is separated from the paper target on purpose. Generating the
-# figures takes long compared to TeXing the paper, and the inputs rarely change.
-# A proper solution would be to write the paper in Sweave and use cacheSweave,
-# but for the moment, the extra complexity does not seem worth it.
-# NOTE: Did not bother to check if the source files are more up-to-date than
-# the pictures. They are always (re)generated when this target is run
 figures: | paper/pictures
 	@echo "Generating figures..."
 	@R CMD BATCH plot_params.r
@@ -106,15 +99,6 @@ figures: | paper/pictures
 paper/pictures:
 	@mkdir -p paper/pictures
 
-paper:
-	$(MAKE) -C paper
-
-arxiv:
-	$(MAKE) -C paper arxiv && mv paper/arxiv.tar .
-
-notes:
-	$(MAKE) -C notes
-
 src-pdf:
 	enscript -E -G -j *.h *.cc *.hpp *.r \
 	         -o /tmp/code.ps; ps2pdf /tmp/code.ps code.pdf
@@ -122,4 +106,3 @@ clean:
 	@rm -f *.o weakdes_test 1bitext_test extractor
 	@rm -rf generated/*
 	@rm -f .rldflags .rcxxflags
-	@$(MAKE) clean -C paper

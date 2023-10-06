@@ -37,15 +37,15 @@ public:
 	void eval_code(const std::string &code);
 	int parse_eval(const std::string &call, SEXP &ans);
 
+	// Delete the copy constructor and assignment operator to prevent copying
+	R_interp(const R_interp&) = delete;
+	R_interp& operator=(const R_interp&) = delete;
+
 private:
 	// Make sure there are no concurrent calls to the R sesson
 	static r_interp_lock_t r_lock;
 	static std::unique_ptr<RInside> r_interp;
 	static short instances; // Ensure there's only one R session
-
-	// Ensure that the object cannot be copied or assigned
-	R_interp& operator = (const R_interp& other) { }
-	R_interp(const R_interp& other) { }
 };
 
 #endif

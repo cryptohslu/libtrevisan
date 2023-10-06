@@ -21,16 +21,16 @@ template<typename C, typename I>
 class bitfield {
 public:
 	bitfield() : data(nullptr), n(0) {
-		bits_per_type=sizeof(*data)*8;
+		bits_per_type=0;
 	};
 
 	bitfield(void *data, I n) {
-		bits_per_type=sizeof(*data)*8;
+		bits_per_type=sizeof(C)*8;
 		set_raw_data(data, n);
 	};
 
 	bitfield(C *data, I n) {
-		bits_per_type=sizeof(*data)*8;
+		bits_per_type=sizeof(C)*8;
 		this->data = data;
 		this->n = n;
 	};

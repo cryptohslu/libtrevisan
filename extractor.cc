@@ -32,7 +32,7 @@
 #include "extractor.h"
 #include "prng.hpp"
 #include <tbb/tbb.h>
-#include <tbb/task_scheduler_init.h>
+#include <tbb/global_control.h>
 #include <RInside.h>
 
 using namespace TCLAP;
@@ -551,12 +551,11 @@ void show_params(struct params &params, bitext *bext, weakdes *wd) {
 /////////////////////////////////// Dispatcher /////////////////////////////
 int dispatch(struct params &params) {
 	int num_tasks;
-	num_tasks = tbb::task_scheduler_init::default_num_threads();
+	num_tasks = tbb::global_control::active_value(tbb::global_control::max_allowed_parallelism);
 	if (params.num_tasks > 0)
 		num_tasks = params.num_tasks;
 	else
 		params.num_tasks = num_tasks;
-	tbb::task_scheduler_init init(num_tasks);
 
 	// We rely on openssl being compiled with thread support
 #define OPENSSL_THREAD_DEFINES

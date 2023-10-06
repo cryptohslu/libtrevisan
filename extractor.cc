@@ -34,6 +34,12 @@
 #include <tbb/tbb.h>
 #include <tbb/global_control.h>
 #include <RInside.h>
+// We rely on openssl being compiled with thread support
+#define OPENSSL_THREAD_DEFINES
+#include <openssl/opensslconf.h>
+#ifndef OPENSSL_THREADS
+#error Please use a thread capable openssl
+#endif
 
 using namespace TCLAP;
 using namespace std;
@@ -556,13 +562,6 @@ int dispatch(struct params &params) {
 		num_tasks = params.num_tasks;
 	else
 		params.num_tasks = num_tasks;
-
-	// We rely on openssl being compiled with thread support
-#define OPENSSL_THREAD_DEFINES
-#include <openssl/opensslconf.h>
-#ifndef OPENSSL_THREADS
-#error Please use a thread capable openssl
-#endif
 
 	init_timekeeping();
 	init_openssl_locking();

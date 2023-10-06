@@ -74,7 +74,7 @@ void *alloc_and_zero(size_t m) {
 // and weakdes. This makes the trevisan extractor algorithm
 // independent of the specific 1-bit-extractor and weak design
 // algorithms
-inline bool trevisan_extract(uint64_t i, vector<uint64_t> &indices,
+inline void trevisan_extract(uint64_t i, vector<uint64_t> &indices,
 			     bitfield<unsigned int, uint64_t> &init_rand_bf,
 			     unsigned int *y_S_i, params &params,
 			     wd_file_lock_type &wd_file_lock, bitext *bext, weakdes *wd,

@@ -62,8 +62,11 @@ template <class T, class F>
 T weakdes_gfp::horner_poly(const vector<T> &coeffs, T x, T modulus, F inv_modulus) {
 	T res = 0;
  
-	for(size_t i = 0; i < coeffs.size(); i++) {
-	    res = multiply_mod(res, x, modulus, inv_modulus) + coeffs[i];
+	// BUG 3
+	//for(size_t i = 0; i < coeffs.size(); i++) {
+	// FIX BUG 3
+	for(int i = coeffs.size() - 1; i >= 0; --i) {
+		res = multiply_mod(res, x, modulus, inv_modulus) + coeffs[i];
 	}
 
 	// Since the coefficients are upper bounded by the modulus,
@@ -222,8 +225,11 @@ void weakdes_gfp::compute_Si(uint64_t i, vector<uint64_t> &indices) {
 	// NOTE: A polynomial of degree deg has deg+1 coefficients,
 	// so we need to iterate up to and _including_ deg.
 	for (count = 0; count <= deg; count++) {
-		coeff[count] = (i & (mask << (count*log_t))) >> count*log_t;
-		coeff[count] = coeff[count] % t;
+		// BUG 2
+		//coeff[count] = (i & (mask << (count*log_t))) >> count*log_t;
+		//coeff[count] = coeff[count] % t;
+		// FIX BUG 2
+		coeff[count] = i / (uint64_t)(pow(t, count)) % t;
 
 		if (debug_level >= EXCESSIVE_INFO)
 			cerr << "Coefficient " << count << ": " <<
@@ -247,6 +253,7 @@ void weakdes_gfp::compute_Si(uint64_t i, vector<uint64_t> &indices) {
 	for (a = 0; a < t_requested; a++) {
 		inv_t = (double)1/t;
 		res = horner_poly<uint64_t, double>(coeff, a, t, inv_t);
+
 
 		// Finally, generate the pair <a, poly(a)> as a concatenation
 		// of the bit values, which denotes one element of S_{i}.
@@ -278,8 +285,11 @@ void weakdes_gfp::compute_Si(uint64_t i, vector<uint64_t> &indices) {
 #endif
 
 		// Perform bitwise concatenation of a and poly(a)=res
-		res_num_tmp <<= log_t;
-		res_num |= res_num_tmp;
+		// BUG 1
+		//res_num_tmp <<= log_t;
+		//res_num |= res_num_tmp;
+		// FIX BUG 1
+		res_num += t * res;
 
 		// Although it is guaranteed that the concatenated
 		// result fits into to available number of bits, the

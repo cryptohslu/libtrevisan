@@ -26,7 +26,7 @@ all.objects = $(objects) $(objects.ext) $(objects.r)
 headers = 1bitext.h debug.h timing.h weakdes_gf2x.h weakdes_gfp.h weakdes_block.h \
 	  utils.hpp weakdes.h bitfield.hpp
 platform=$(shell uname)
-INCDIRS=-I/usr/include/openssl-1.0/
+INCDIRS=-I/usr/include/openssl-1.0/ -I/usr/lib/R/library/RInside/include/ -I/usr/lib/R/library/Rcpp/include/ -I/usr/include/R/
 LIBDIRS=-L/usr/lib/openssl-1.0/
 CXXFLAGS=$(OPTIMISE) $(OPENMP) $(DEBUG) $(VARIANTS) $(INCDIRS)
 ifeq ($(HAVE_SSE4),y)

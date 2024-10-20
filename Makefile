@@ -88,6 +88,10 @@ extractor: $(all.objects) extractor.cc $(headers) .rldflags .rcxxflags
 	$(CXX) $(CXXFLAGS) $(shell cat .rcxxflags) extractor.cc $(all.objects) -o extractor \
 	$(LIBDIRS) $(LIBS) $(shell cat .rldflags)
 
+test_design: $(all.objects) test_weakdes_gfp.cpp $(headers) .rldflags .rcxxflags
+	$(CXX) $(CXXFLAGS) $(shell cat .rcxxflags) test_weakdes_gfp.cpp weakdes_gfp.o -o test_weakdes_gfp \
+	$(LIBDIRS) $(LIBS) $(shell cat .rldflags)
+
 figures: | paper/pictures
 	@echo "Generating figures..."
 	@R CMD BATCH plot_params.r
